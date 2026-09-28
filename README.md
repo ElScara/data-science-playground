@@ -1,4 +1,4 @@
-# 🎢 Data Science Playground 
+# 🎢 Karabo's Data Science Playground 
 
 Welcome to my analytical sandbox. Like a busy prep station behind a Michelin-starred dish, this repository is dedicated to the heavy lifting: the continuous experimentation, data engineering, and raw code that power my deployed analytical solutions.
 
