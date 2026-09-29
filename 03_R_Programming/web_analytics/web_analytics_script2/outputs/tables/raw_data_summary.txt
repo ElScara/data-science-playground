@@ -1,0 +1,14 @@
+    Bounces           Exits            Continent        Sourcegroup   
+ Min.   : 0.000   Min.   : 0.000   Length   :32109   Length   :32109  
+ 1st Qu.: 0.000   1st Qu.: 1.000   N.unique :    6   N.unique :    9  
+ Median : 1.000   Median : 1.000   N.blank  :    0   N.blank  :    0  
+ Mean   : 0.713   Mean   : 0.906   Min.nchar:    2   Min.nchar:    4  
+ 3rd Qu.: 1.000   3rd Qu.: 1.000   Max.nchar:    9   Max.nchar:   26  
+ Max.   :30.000   Max.   :36.000                                      
+   Timeinpage       Uniquepageviews      Visits         BouncesNew     
+ Min.   :    0.00   Min.   : 1.000   Min.   : 0.000   Min.   :0.00000  
+ 1st Qu.:    0.00   1st Qu.: 1.000   1st Qu.: 1.000   1st Qu.:0.00000  
+ Median :    0.00   Median : 1.000   Median : 1.000   Median :0.01000  
+ Mean   :   73.19   Mean   : 1.114   Mean   : 0.906   Mean   :0.00713  
+ 3rd Qu.:   10.00   3rd Qu.: 1.000   3rd Qu.: 1.000   3rd Qu.:0.01000  
+ Max.   :46745.00   Max.   :45.000   Max.   :45.000   Max.   :0.30000  

@@ -1,0 +1,43 @@
+
+Call:
+lm(formula = BounceMetric ~ TimeOnPage + Exits + UniquePageviews + 
+    Visits + Continent + SourceGroup, data = clean_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.2053 -0.1629  0.0088  0.1139  2.2480 
+
+Coefficients:
+                                        Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                           -5.304e-01  4.747e-02 -11.173  < 2e-16 ***
+TimeOnPage                            -5.432e-05  5.508e-06  -9.862  < 2e-16 ***
+Exits                                  2.774e-01  9.012e-03  30.776  < 2e-16 ***
+UniquePageviews                       -4.644e-02  1.582e-02  -2.935  0.00335 ** 
+Visits                                 6.005e-01  1.662e-02  36.129  < 2e-16 ***
+ContinentAS                           -1.066e-01  4.866e-02  -2.191  0.02851 *  
+ContinentEU                           -1.130e-01  4.739e-02  -2.385  0.01714 *  
+ContinentN.America                    -1.251e-01  4.660e-02  -2.684  0.00730 ** 
+ContinentOC                           -2.744e-02  5.141e-02  -0.534  0.59356    
+ContinentSA                            1.709e-02  5.423e-02   0.315  0.75267    
+SourceGroupfacebook                    2.228e-01  7.502e-02   2.970  0.00299 ** 
+SourceGroupgoogle                     -2.679e-02  1.444e-02  -1.856  0.06356 .  
+SourceGroupOthers                      8.191e-03  1.645e-02   0.498  0.61856    
+SourceGrouppublic.tableausoftware.com -9.432e-03  2.197e-02  -0.429  0.66773    
+SourceGroupreddit.com                  1.170e-01  3.848e-02   3.041  0.00237 ** 
+SourceGroupt.co                        8.796e-02  2.213e-02   3.974 7.16e-05 ***
+SourceGrouptableausoftware.com         2.522e-02  1.986e-02   1.270  0.20421    
+SourceGroupvisualisingdata.com         8.249e-02  2.744e-02   3.006  0.00266 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.3477 on 4661 degrees of freedom
+Multiple R-squared:  0.8975,	Adjusted R-squared:  0.8971 
+F-statistic:  2401 on 17 and 4661 DF,  p-value: < 2.2e-16
+
+                     GVIF Df GVIF^(1/(2*Df))
+TimeOnPage       1.016944  1        1.008436
+Exits            5.463392  1        2.337390
+UniquePageviews 17.153578  1        4.141688
+Visits          16.688669  1        4.085177
+Continent        1.056717  5        1.005532
+SourceGroup      1.103670  8        1.006184

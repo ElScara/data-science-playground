@@ -1,0 +1,15 @@
+DATA CLEANING NOTES
+===================
+
+Original rows: 32109 
+Rows after cleaning: 4679 
+Rows removed: 27430 
+
+Cleaning decision:
+- Duplicate rows were removed.
+- Rows with Visits = 0 were removed from main analysis.
+- Zero-visit rows were removed because visits represent valid sessions.
+- PageviewVisitIssue was flagged but not automatically removed.
+
+Bounce metric note:
+Bounces appears to be a percentage/proportion-style variable, so Bounces was used as the bounce metric. 

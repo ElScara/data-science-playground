@@ -1,0 +1,7 @@
+"","Bounces","BounceMetric","Exits","TimeOnPage","UniquePageviews","Visits"
+"Bounces",1,1,0.898,0.036,0.91,0.934
+"BounceMetric",1,1,0.898,0.036,0.91,0.934
+"Exits",0.898,0.898,1,0.093,0.894,0.892
+"TimeOnPage",0.036,0.036,0.093,1,0.083,0.083
+"UniquePageviews",0.91,0.91,0.894,0.083,1,0.968
+"Visits",0.934,0.934,0.892,0.083,0.968,1

@@ -1,0 +1,10 @@
+              Df Sum Sq Mean Sq F value Pr(>F)   
+Continent      5     21   4.233   3.613 0.0029 **
+Residuals   4673   5476   1.172                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+              Df Sum Sq Mean Sq F value Pr(>F)    
+SourceGroup    8    128   15.95   13.87 <2e-16 ***
+Residuals   4670   5369    1.15                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

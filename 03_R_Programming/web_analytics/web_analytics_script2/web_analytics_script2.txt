@@ -1,0 +1,1166 @@
+raw  code 
+
+# ===================================================================
+# WEB ANALYTICS ANALYSIS FOR www.datadb.com
+# Complete R Script Addressing All Business Requirements
+# ===================================================================
+
+# Business Questions:
+# 1. Summarise each variable in the dataset.
+# 2. Determine whether unique pageviews depend on visits.
+# 3. Identify probable factors affecting exits.
+# 4. Identify variables affecting time on page.
+# 5. Identify factors impacting bounces.
+# ===================================================================
+
+# ===================================================================
+# 0. SETUP: ENVIRONMENT PREPARATION
+# ===================================================================
+
+# Clear existing objects
+rm(list = ls())
+
+ #Install packages  install.packages("tidyverse")
+ install.packages("readxl")
+ install.packages("corrplot")
+ install.packages("car")
+ install.packages("psych")
+ install.packages("broom")
+
+# Load packages
+library(tidyverse)
+library(readxl)
+library(corrplot)
+library(car)
+library(psych)
+library(broom)
+
+# Create output folders for screenshots, tables, and models
+if (!dir.exists("outputs")) dir.create("outputs")
+if (!dir.exists("outputs/plots")) dir.create("outputs/plots")
+if (!dir.exists("outputs/tables")) dir.create("outputs/tables")
+if (!dir.exists("outputs/models")) dir.create("outputs/models")
+
+cat("==============================================\n")
+cat("WEB ANALYTICS ANALYSIS - www.datadb.com\n")
+cat("==============================================\n\n")
+
+# ===================================================================
+# 1. DATA INGESTION: LOAD THE RAW DATA
+# ===================================================================
+
+# Replace this path with your actual file path if needed
+file_path <- "C:/Users/KaraboRamalatso/Downloads/1555058318_internet_dataset.xlsx"
+
+# Check available sheet names
+excel_sheets(file_path)
+
+# Load the dataset
+raw_data <- read_excel(file_path, sheet = "InternetCaseStudy")
+
+# View first rows
+head(raw_data, 10)
+
+# View data structure
+str(raw_data)
+
+# View column names
+names(raw_data)
+
+# Save first rows to file
+write.csv(head(raw_data, 10), "outputs/tables/first_10_rows.csv", row.names = FALSE)
+
+cat("Data loaded successfully.\n")
+cat("Number of rows:", nrow(raw_data), "\n")
+cat("Number of columns:", ncol(raw_data), "\n\n")
+
+# ===================================================================
+# 2. DATA QUALITY ASSESSMENT
+# ===================================================================
+
+# Required columns based on the project brief
+required_columns <- c(
+"Bounces",
+"Continent",
+"Sourcegroup",
+"Timeinpage",
+"Uniquepageviews",
+"Visits",
+"Exits"
+)
+
+# Check if any required columns are missing
+missing_columns <- setdiff(required_columns, names(raw_data))
+
+if (length(missing_columns) > 0) {
+stop(paste("Missing required columns:", paste(missing_columns, collapse = ", ")))
+}
+
+# Check missing values
+missing_values <- raw_data %>%
+summarise(across(everything(), ~ sum(is.na(.))))
+
+print(missing_values)
+
+write.csv(missing_values, "outputs/tables/missing_values.csv", row.names = FALSE)
+
+# Check duplicate rows
+duplicate_count <- sum(duplicated(raw_data))
+cat("Number of duplicate rows:", duplicate_count, "\n")
+
+# Basic raw summary
+summary(raw_data)
+
+# Save raw summary
+capture.output(
+summary(raw_data),
+file = "outputs/tables/raw_data_summary.txt"
+)
+
+# Check range of important numeric variables
+range_check <- raw_data %>%
+summarise(
+  Min_Bounces = min(Bounces, na.rm = TRUE),
+  Max_Bounces = max(Bounces, na.rm = TRUE),
+  Min_Exits = min(Exits, na.rm = TRUE),
+  Max_Exits = max(Exits, na.rm = TRUE),
+  Min_Timeinpage = min(Timeinpage, na.rm = TRUE),
+  Max_Timeinpage = max(Timeinpage, na.rm = TRUE),
+  Min_UniquePageviews = min(Uniquepageviews, na.rm = TRUE),
+  Max_UniquePageviews = max(Uniquepageviews, na.rm = TRUE),
+  Min_Visits = min(Visits, na.rm = TRUE),
+  Max_Visits = max(Visits, na.rm = TRUE)
+)
+
+print(range_check)
+
+write.csv(range_check, "outputs/tables/range_check.csv", row.names = FALSE)
+
+# Screenshot/output: Data quality summary
+png("outputs/plots/01_data_quality_summary.png", width = 1300, height = 800)
+par(mfrow = c(2, 2))
+
+hist(raw_data$Visits,
+   main = "Distribution of Visits - Raw Data",
+   xlab = "Visits",
+   col = "steelblue",
+   breaks = 40)
+
+hist(raw_data$Bounces,
+   main = "Distribution of Bounces - Raw Data",
+   xlab = "Bounces",
+   col = "orange",
+   breaks = 40)
+
+hist(raw_data$Exits,
+   main = "Distribution of Exits - Raw Data",
+   xlab = "Exits",
+   col = "tomato",
+   breaks = 40)
+
+plot.new()
+text(
+0.1, 0.9,
+paste(
+  "Data Quality Summary\n\n",
+  "Rows:", nrow(raw_data), "\n",
+  "Columns:", ncol(raw_data), "\n",
+  "Duplicate rows:", duplicate_count, "\n",
+  "Rows with Visits = 0:", sum(raw_data$Visits == 0, na.rm = TRUE), "\n",
+  "Missing values found:", sum(is.na(raw_data))
+),
+adj = c(0, 1),
+cex = 1.2
+)
+
+dev.off()
+
+# ===================================================================
+# 3. DATA QUALITY FLAGS: ZERO VISITS AND LOGICAL ISSUES
+# ===================================================================
+
+# Flag rows where Visits = 0 but other activity exists
+raw_data <- raw_data %>%
+mutate(
+  ZeroVisitActivity = ifelse(
+    Visits == 0 &
+      (
+        Bounces > 0 |
+        Exits > 0 |
+        Timeinpage > 0 |
+        Uniquepageviews > 0
+      ),
+    1,
+    0
+  ),
+  
+  PageviewVisitIssue = ifelse(
+    Uniquepageviews > Visits & Visits > 0,
+    1,
+    0
+  )
+)
+
+# Summarise zero visit issue
+zero_visit_summary <- raw_data %>%
+summarise(
+  TotalRows = n(),
+  ZeroVisitRows = sum(Visits == 0, na.rm = TRUE),
+  ZeroVisitActivityRows = sum(ZeroVisitActivity, na.rm = TRUE),
+  PercentZeroVisitActivity = round(mean(ZeroVisitActivity, na.rm = TRUE) * 100, 2)
+)
+
+print(zero_visit_summary)
+
+write.csv(zero_visit_summary, "outputs/tables/zero_visit_summary.csv", row.names = FALSE)
+
+# Summarise pageview issue
+pageview_issue_summary <- raw_data %>%
+summarise(
+  TotalRows = n(),
+  PageviewVisitIssueRows = sum(PageviewVisitIssue, na.rm = TRUE),
+  PercentPageviewVisitIssue = round(mean(PageviewVisitIssue, na.rm = TRUE) * 100, 2)
+)
+
+print(pageview_issue_summary)
+
+write.csv(pageview_issue_summary, "outputs/tables/pageview_visit_issue_summary.csv", row.names = FALSE)
+
+# Profile zero-visit activity by continent
+zero_by_continent <- raw_data %>%
+group_by(Continent) %>%
+summarise(
+  TotalRows = n(),
+  ZeroVisitActivityRows = sum(ZeroVisitActivity, na.rm = TRUE),
+  Percent = round(ZeroVisitActivityRows / TotalRows * 100, 2),
+  .groups = "drop"
+)
+
+print(zero_by_continent)
+
+write.csv(zero_by_continent, "outputs/tables/zero_visit_by_continent.csv", row.names = FALSE)
+
+# Profile zero-visit activity by source group
+zero_by_source <- raw_data %>%
+group_by(Sourcegroup) %>%
+summarise(
+  TotalRows = n(),
+  ZeroVisitActivityRows = sum(ZeroVisitActivity, na.rm = TRUE),
+  Percent = round(ZeroVisitActivityRows / TotalRows * 100, 2),
+  .groups = "drop"
+)
+
+print(zero_by_source)
+
+write.csv(zero_by_source, "outputs/tables/zero_visit_by_source.csv", row.names = FALSE)
+
+# Output chart for zero visit issue
+png("outputs/plots/02_zero_visit_activity_profile.png", width = 1400, height = 700)
+par(mfrow = c(1, 2))
+
+barplot(
+zero_by_continent$Percent,
+names.arg = zero_by_continent$Continent,
+main = "Zero-Visit Activity by Continent",
+ylab = "Percentage",
+col = "skyblue",
+las = 2
+)
+
+barplot(
+zero_by_source$Percent,
+names.arg = zero_by_source$Sourcegroup,
+main = "Zero-Visit Activity by Source Group",
+ylab = "Percentage",
+col = "coral",
+las = 2,
+cex.names = 0.8
+)
+
+dev.off()
+
+# ===================================================================
+# 4. DATA CLEANING AND FEATURE PREPARATION
+# ===================================================================
+
+# Remove duplicate records
+clean_data <- raw_data %>%
+distinct()
+
+# Main cleaning rule:
+# Remove rows with Visits = 0 because visits represent valid sessions.
+# Rows with zero visits cannot be reliably used in web activity modelling.
+clean_data <- clean_data %>%
+filter(Visits > 0)
+
+# Convert categorical variables to factors
+clean_data <- clean_data %>%
+mutate(
+  Continent = as.factor(Continent),
+  Sourcegroup = as.factor(Sourcegroup)
+)
+
+# Rename columns for clearer coding
+clean_data <- clean_data %>%
+rename(
+  SourceGroup = Sourcegroup,
+  TimeOnPage = Timeinpage,
+  UniquePageviews = Uniquepageviews
+)
+
+# Create supporting per-visit metrics
+clean_data <- clean_data %>%
+mutate(
+  AvgTimeOnPage = TimeOnPage / Visits,
+  ViewsPerVisit = UniquePageviews / Visits,
+  BouncePerVisit = Bounces / Visits,
+  ExitPerVisit = Exits / Visits
+)
+
+# Decide how to treat Bounces:
+# If Bounces ranges from 0 to 100, it may already be a percentage.
+# If Bounces is greater than 100, it is likely a count.
+max_bounces <- max(clean_data$Bounces, na.rm = TRUE)
+
+if (max_bounces <= 100) {
+clean_data <- clean_data %>%
+  mutate(BounceMetric = Bounces)
+bounce_metric_note <- "Bounces appears to be a percentage/proportion-style variable, so Bounces was used as the bounce metric."
+} else {
+clean_data <- clean_data %>%
+  mutate(BounceMetric = BouncePerVisit)
+bounce_metric_note <- "Bounces appears to be a count, so BouncePerVisit was used as the bounce metric."
+}
+
+cat(bounce_metric_note, "\n")
+
+# Confirm cleaned data
+cat("Original rows:", nrow(raw_data), "\n")
+cat("Rows after cleaning:", nrow(clean_data), "\n")
+cat("Rows removed:", nrow(raw_data) - nrow(clean_data), "\n\n")
+
+str(clean_data)
+summary(clean_data)
+
+# Save cleaned dataset
+write.csv(clean_data, "outputs/tables/clean_web_analytics_data.csv", row.names = FALSE)
+
+# Save cleaning notes
+sink("outputs/tables/data_cleaning_notes.txt")
+cat("DATA CLEANING NOTES\n")
+cat("===================\n\n")
+cat("Original rows:", nrow(raw_data), "\n")
+cat("Rows after cleaning:", nrow(clean_data), "\n")
+cat("Rows removed:", nrow(raw_data) - nrow(clean_data), "\n\n")
+cat("Cleaning decision:\n")
+cat("- Duplicate rows were removed.\n")
+cat("- Rows with Visits = 0 were removed from main analysis.\n")
+cat("- Zero-visit rows were removed because visits represent valid sessions.\n")
+cat("- PageviewVisitIssue was flagged but not automatically removed.\n\n")
+cat("Bounce metric note:\n")
+cat(bounce_metric_note, "\n")
+sink()
+
+# ===================================================================
+# TASK 1: DATA SUMMARISATION OF EACH VARIABLE
+# ===================================================================
+
+cat("\nTASK 1: DATA SUMMARISATION\n")
+
+# Descriptive statistics for numeric variables
+numeric_summary <- describe(clean_data %>% select(where(is.numeric)))
+print(numeric_summary)
+
+capture.output(
+numeric_summary,
+file = "outputs/tables/task1_numeric_summary.txt"
+)
+
+# Frequency table for Continent
+continent_frequency <- clean_data %>%
+count(Continent, sort = TRUE)
+
+print(continent_frequency)
+
+write.csv(continent_frequency, "outputs/tables/task1_continent_frequency.csv", row.names = FALSE)
+
+# Frequency table for Source Group
+source_frequency <- clean_data %>%
+count(SourceGroup, sort = TRUE)
+
+print(source_frequency)
+
+write.csv(source_frequency, "outputs/tables/task1_source_frequency.csv", row.names = FALSE)
+
+# Overall numeric business summary
+overall_summary <- clean_data %>%
+summarise(
+  Records = n(),
+  TotalVisits = sum(Visits, na.rm = TRUE),
+  TotalUniquePageviews = sum(UniquePageviews, na.rm = TRUE),
+  TotalBounces = sum(Bounces, na.rm = TRUE),
+  TotalExits = sum(Exits, na.rm = TRUE),
+  AvgVisits = mean(Visits, na.rm = TRUE),
+  AvgUniquePageviews = mean(UniquePageviews, na.rm = TRUE),
+  AvgTimeOnPage = mean(TimeOnPage, na.rm = TRUE),
+  AvgBounces = mean(Bounces, na.rm = TRUE),
+  AvgExits = mean(Exits, na.rm = TRUE),
+  AvgViewsPerVisit = mean(ViewsPerVisit, na.rm = TRUE),
+  AvgBounceMetric = mean(BounceMetric, na.rm = TRUE),
+  AvgExitPerVisit = mean(ExitPerVisit, na.rm = TRUE)
+)
+
+print(overall_summary)
+
+write.csv(overall_summary, "outputs/tables/task1_overall_summary.csv", row.names = FALSE)
+
+# Visual distributions
+png("outputs/plots/03_task1_variable_distributions.png", width = 1600, height = 1000)
+par(mfrow = c(2, 3))
+
+hist(clean_data$Visits,
+   main = "Distribution of Visits",
+   xlab = "Visits",
+   col = "steelblue",
+   breaks = 40)
+
+hist(clean_data$UniquePageviews,
+   main = "Distribution of Unique Pageviews",
+   xlab = "Unique Pageviews",
+   col = "lightgreen",
+   breaks = 40)
+
+hist(clean_data$TimeOnPage,
+   main = "Distribution of Time on Page",
+   xlab = "Time on Page",
+   col = "purple",
+   breaks = 40)
+
+hist(clean_data$Bounces,
+   main = "Distribution of Bounces",
+   xlab = "Bounces",
+   col = "orange",
+   breaks = 40)
+
+hist(clean_data$Exits,
+   main = "Distribution of Exits",
+   xlab = "Exits",
+   col = "tomato",
+   breaks = 40)
+
+plot.new()
+text(
+0.1, 0.9,
+paste(
+  "Task 1 Summary\n\n",
+  "Records:", nrow(clean_data), "\n",
+  "Total Visits:", sum(clean_data$Visits), "\n",
+  "Mean Visits:", round(mean(clean_data$Visits), 2), "\n",
+  "Mean Time on Page:", round(mean(clean_data$TimeOnPage), 2), "\n",
+  "Mean Bounces:", round(mean(clean_data$Bounces), 2), "\n",
+  "Mean Exits:", round(mean(clean_data$Exits), 2)
+),
+adj = c(0, 1),
+cex = 1.2
+)
+
+dev.off()
+
+# Boxplots for outlier understanding
+png("outputs/plots/04_task1_boxplots.png", width = 1400, height = 800)
+boxplot(
+clean_data %>% select(Bounces, TimeOnPage, UniquePageviews, Visits, Exits),
+main = "Boxplots of Numeric Variables",
+col = c("orange", "purple", "lightgreen", "steelblue", "tomato"),
+las = 2
+)
+dev.off()
+
+# Summary by Continent
+continent_summary <- clean_data %>%
+group_by(Continent) %>%
+summarise(
+  Records = n(),
+  TotalVisits = sum(Visits, na.rm = TRUE),
+  AvgVisits = mean(Visits, na.rm = TRUE),
+  AvgUniquePageviews = mean(UniquePageviews, na.rm = TRUE),
+  AvgTimeOnPage = mean(TimeOnPage, na.rm = TRUE),
+  AvgBounces = mean(Bounces, na.rm = TRUE),
+  AvgExits = mean(Exits, na.rm = TRUE),
+  AvgBounceMetric = mean(BounceMetric, na.rm = TRUE),
+  AvgExitPerVisit = mean(ExitPerVisit, na.rm = TRUE),
+  .groups = "drop"
+) %>%
+arrange(desc(TotalVisits))
+
+print(continent_summary)
+
+write.csv(continent_summary, "outputs/tables/task1_continent_summary.csv", row.names = FALSE)
+
+# Summary by Source Group
+source_summary <- clean_data %>%
+group_by(SourceGroup) %>%
+summarise(
+  Records = n(),
+  TotalVisits = sum(Visits, na.rm = TRUE),
+  AvgVisits = mean(Visits, na.rm = TRUE),
+  AvgUniquePageviews = mean(UniquePageviews, na.rm = TRUE),
+  AvgTimeOnPage = mean(TimeOnPage, na.rm = TRUE),
+  AvgBounces = mean(Bounces, na.rm = TRUE),
+  AvgExits = mean(Exits, na.rm = TRUE),
+  AvgBounceMetric = mean(BounceMetric, na.rm = TRUE),
+  AvgExitPerVisit = mean(ExitPerVisit, na.rm = TRUE),
+  .groups = "drop"
+) %>%
+arrange(desc(TotalVisits))
+
+print(source_summary)
+
+write.csv(source_summary, "outputs/tables/task1_source_summary.csv", row.names = FALSE)
+
+# Business summary charts
+png("outputs/plots/05_task1_continent_and_source_summary.png", width = 1600, height = 1000)
+par(mfrow = c(2, 2))
+
+barplot(
+continent_summary$TotalVisits,
+names.arg = continent_summary$Continent,
+main = "Total Visits by Continent",
+ylab = "Total Visits",
+col = "skyblue",
+las = 2
+)
+
+barplot(
+source_summary$TotalVisits,
+names.arg = source_summary$SourceGroup,
+main = "Total Visits by Source Group",
+ylab = "Total Visits",
+col = "coral",
+las = 2,
+cex.names = 0.8
+)
+
+boxplot(
+TimeOnPage ~ SourceGroup,
+data = clean_data,
+main = "Time on Page by Source Group",
+col = "lightgreen",
+las = 2
+)
+
+boxplot(
+BounceMetric ~ SourceGroup,
+data = clean_data,
+main = "Bounce Metric by Source Group",
+col = "orange",
+las = 2
+)
+
+dev.off()
+
+# ===================================================================
+# CORRELATION ANALYSIS FOR NUMERIC VARIABLES
+# ===================================================================
+
+numeric_vars <- clean_data %>%
+select(Bounces, BounceMetric, Exits, TimeOnPage, UniquePageviews, Visits)
+
+cor_matrix <- cor(numeric_vars, use = "complete.obs")
+
+print(round(cor_matrix, 3))
+
+write.csv(round(cor_matrix, 3), "outputs/tables/correlation_matrix.csv", row.names = TRUE)
+
+png("outputs/plots/06_correlation_matrix.png", width = 1200, height = 1000)
+corrplot(
+cor_matrix,
+method = "color",
+type = "upper",
+addCoef.col = "black",
+number.cex = 0.8,
+tl.col = "black",
+tl.srt = 45,
+title = "Correlation Matrix of Numeric Variables",
+mar = c(0, 0, 2, 0)
+)
+dev.off()
+
+# ===================================================================
+# TASK 2: DOES UNIQUE PAGEVIEW DEPEND ON VISITS?
+# ===================================================================
+
+cat("\nTASK 2: UNIQUE PAGEVIEWS DEPENDING ON VISITS\n")
+
+# Scatter plot
+png("outputs/plots/07_task2_unique_pageviews_vs_visits.png", width = 1400, height = 800)
+plot(
+clean_data$Visits,
+clean_data$UniquePageviews,
+main = "Unique Pageviews vs Visits",
+xlab = "Visits",
+ylab = "Unique Pageviews",
+pch = 16,
+col = rgb(0, 0, 1, 0.35)
+)
+abline(lm(UniquePageviews ~ Visits, data = clean_data), col = "red", lwd = 2)
+dev.off()
+
+# Pearson correlation
+cor_unique_visits_pearson <- cor.test(
+clean_data$Visits,
+clean_data$UniquePageviews,
+method = "pearson"
+)
+
+print(cor_unique_visits_pearson)
+
+# Spearman correlation
+cor_unique_visits_spearman <- cor.test(
+clean_data$Visits,
+clean_data$UniquePageviews,
+method = "spearman"
+)
+
+print(cor_unique_visits_spearman)
+
+# Linear regression
+model_pageviews <- lm(
+UniquePageviews ~ Visits,
+data = clean_data
+)
+
+summary_pageviews <- summary(model_pageviews)
+
+print(summary_pageviews)
+
+# Save output
+capture.output(
+cor_unique_visits_pearson,
+cor_unique_visits_spearman,
+summary_pageviews,
+file = "outputs/models/task2_unique_pageviews_model.txt"
+)
+
+write.csv(tidy(model_pageviews), "outputs/models/task2_unique_pageviews_coefficients.csv", row.names = FALSE)
+write.csv(glance(model_pageviews), "outputs/models/task2_unique_pageviews_fit.csv", row.names = FALSE)
+
+# Regression output image
+png("outputs/plots/08_task2_regression_output.png", width = 1400, height = 900)
+plot.new()
+text(
+0.05, 0.95,
+paste(capture.output(print(summary_pageviews)), collapse = "\n"),
+adj = c(0, 1),
+cex = 0.75,
+family = "mono"
+)
+dev.off()
+
+# Diagnostic plots
+png("outputs/plots/09_task2_diagnostic_plots.png", width = 1400, height = 1200)
+par(mfrow = c(2, 2))
+plot(model_pageviews)
+dev.off()
+
+# ===================================================================
+# TASK 3: FACTORS AFFECTING EXITS
+# ===================================================================
+
+cat("\nTASK 3: FACTORS AFFECTING EXITS\n")
+
+# Visual relationships
+png("outputs/plots/10_task3_exits_relationships.png", width = 1600, height = 1200)
+par(mfrow = c(2, 3))
+
+plot(clean_data$Visits, clean_data$Exits,
+   main = "Exits vs Visits",
+   xlab = "Visits",
+   ylab = "Exits",
+   pch = 16,
+   col = rgb(0, 0, 1, 0.35))
+abline(lm(Exits ~ Visits, data = clean_data), col = "red", lwd = 2)
+
+plot(clean_data$Bounces, clean_data$Exits,
+   main = "Exits vs Bounces",
+   xlab = "Bounces",
+   ylab = "Exits",
+   pch = 16,
+   col = rgb(0, 0, 1, 0.35))
+abline(lm(Exits ~ Bounces, data = clean_data), col = "red", lwd = 2)
+
+plot(clean_data$TimeOnPage, clean_data$Exits,
+   main = "Exits vs Time on Page",
+   xlab = "Time on Page",
+   ylab = "Exits",
+   pch = 16,
+   col = rgb(0, 0, 1, 0.35))
+abline(lm(Exits ~ TimeOnPage, data = clean_data), col = "red", lwd = 2)
+
+plot(clean_data$UniquePageviews, clean_data$Exits,
+   main = "Exits vs Unique Pageviews",
+   xlab = "Unique Pageviews",
+   ylab = "Exits",
+   pch = 16,
+   col = rgb(0, 0, 1, 0.35))
+abline(lm(Exits ~ UniquePageviews, data = clean_data), col = "red", lwd = 2)
+
+boxplot(Exits ~ Continent,
+      data = clean_data,
+      main = "Exits by Continent",
+      col = "lightgreen",
+      las = 2)
+
+boxplot(Exits ~ SourceGroup,
+      data = clean_data,
+      main = "Exits by Source Group",
+      col = "lightblue",
+      las = 2)
+
+dev.off()
+
+# Multiple linear regression model for exits
+model_exits <- lm(
+Exits ~ Bounces + TimeOnPage + UniquePageviews + Visits + Continent + SourceGroup,
+data = clean_data
+)
+
+summary_exits <- summary(model_exits)
+
+print(summary_exits)
+
+# VIF check
+vif_exits <- vif(model_exits)
+print(vif_exits)
+
+# Save model output
+capture.output(
+summary_exits,
+vif_exits,
+file = "outputs/models/task3_exits_model.txt"
+)
+
+write.csv(tidy(model_exits), "outputs/models/task3_exits_coefficients.csv", row.names = FALSE)
+write.csv(glance(model_exits), "outputs/models/task3_exits_fit.csv", row.names = FALSE)
+
+# Regression output image
+png("outputs/plots/11_task3_exits_regression_output.png", width = 1400, height = 1000)
+plot.new()
+text(
+0.05, 0.95,
+paste(capture.output(print(summary_exits)), collapse = "\n"),
+adj = c(0, 1),
+cex = 0.68,
+family = "mono"
+)
+dev.off()
+
+# Diagnostic plots
+png("outputs/plots/12_task3_exits_diagnostic_plots.png", width = 1400, height = 1200)
+par(mfrow = c(2, 2))
+plot(model_exits)
+dev.off()
+
+# ===================================================================
+# TASK 4: VARIABLES AFFECTING TIME ON PAGE
+# ===================================================================
+
+cat("\nTASK 4: FACTORS AFFECTING TIME ON PAGE\n")
+
+# Visual relationships
+png("outputs/plots/13_task4_time_on_page_relationships.png", width = 1600, height = 1200)
+par(mfrow = c(2, 3))
+
+plot(clean_data$Visits, clean_data$TimeOnPage,
+   main = "Time on Page vs Visits",
+   xlab = "Visits",
+   ylab = "Time on Page",
+   pch = 16,
+   col = rgb(0, 0, 1, 0.35))
+abline(lm(TimeOnPage ~ Visits, data = clean_data), col = "red", lwd = 2)
+
+plot(clean_data$Bounces, clean_data$TimeOnPage,
+   main = "Time on Page vs Bounces",
+   xlab = "Bounces",
+   ylab = "Time on Page",
+   pch = 16,
+   col = rgb(0, 0, 1, 0.35))
+abline(lm(TimeOnPage ~ Bounces, data = clean_data), col = "red", lwd = 2)
+
+plot(clean_data$Exits, clean_data$TimeOnPage,
+   main = "Time on Page vs Exits",
+   xlab = "Exits",
+   ylab = "Time on Page",
+   pch = 16,
+   col = rgb(0, 0, 1, 0.35))
+abline(lm(TimeOnPage ~ Exits, data = clean_data), col = "red", lwd = 2)
+
+plot(clean_data$UniquePageviews, clean_data$TimeOnPage,
+   main = "Time on Page vs Unique Pageviews",
+   xlab = "Unique Pageviews",
+   ylab = "Time on Page",
+   pch = 16,
+   col = rgb(0, 0, 1, 0.35))
+abline(lm(TimeOnPage ~ UniquePageviews, data = clean_data), col = "red", lwd = 2)
+
+boxplot(TimeOnPage ~ Continent,
+      data = clean_data,
+      main = "Time on Page by Continent",
+      col = "lightgreen",
+      las = 2)
+
+boxplot(TimeOnPage ~ SourceGroup,
+      data = clean_data,
+      main = "Time on Page by Source Group",
+      col = "gold",
+      las = 2)
+
+dev.off()
+
+# Multiple regression model for time on page
+model_time <- lm(
+TimeOnPage ~ Bounces + Exits + UniquePageviews + Visits + Continent + SourceGroup,
+data = clean_data
+)
+
+summary_time <- summary(model_time)
+
+print(summary_time)
+
+# VIF check
+vif_time <- vif(model_time)
+print(vif_time)
+
+# Save model output
+capture.output(
+summary_time,
+vif_time,
+file = "outputs/models/task4_time_on_page_model.txt"
+)
+
+write.csv(tidy(model_time), "outputs/models/task4_time_on_page_coefficients.csv", row.names = FALSE)
+write.csv(glance(model_time), "outputs/models/task4_time_on_page_fit.csv", row.names = FALSE)
+
+# Regression output image
+png("outputs/plots/14_task4_time_regression_output.png", width = 1400, height = 1000)
+plot.new()
+text(
+0.05, 0.95,
+paste(capture.output(print(summary_time)), collapse = "\n"),
+adj = c(0, 1),
+cex = 0.68,
+family = "mono"
+)
+dev.off()
+
+# Diagnostic plots
+png("outputs/plots/15_task4_time_diagnostic_plots.png", width = 1400, height = 1200)
+par(mfrow = c(2, 2))
+plot(model_time)
+dev.off()
+
+# ===================================================================
+# TASK 5: FACTORS IMPACTING BOUNCES
+# ===================================================================
+
+cat("\nTASK 5: FACTORS IMPACTING BOUNCES\n")
+
+# Visual relationships
+png("outputs/plots/16_task5_bounce_relationships.png", width = 1600, height = 1200)
+par(mfrow = c(2, 3))
+
+plot(clean_data$Visits, clean_data$BounceMetric,
+   main = "Bounce Metric vs Visits",
+   xlab = "Visits",
+   ylab = "Bounce Metric",
+   pch = 16,
+   col = rgb(0, 0, 1, 0.35))
+abline(lm(BounceMetric ~ Visits, data = clean_data), col = "red", lwd = 2)
+
+plot(clean_data$TimeOnPage, clean_data$BounceMetric,
+   main = "Bounce Metric vs Time on Page",
+   xlab = "Time on Page",
+   ylab = "Bounce Metric",
+   pch = 16,
+   col = rgb(0, 0, 1, 0.35))
+abline(lm(BounceMetric ~ TimeOnPage, data = clean_data), col = "red", lwd = 2)
+
+plot(clean_data$Exits, clean_data$BounceMetric,
+   main = "Bounce Metric vs Exits",
+   xlab = "Exits",
+   ylab = "Bounce Metric",
+   pch = 16,
+   col = rgb(0, 0, 1, 0.35))
+abline(lm(BounceMetric ~ Exits, data = clean_data), col = "red", lwd = 2)
+
+plot(clean_data$UniquePageviews, clean_data$BounceMetric,
+   main = "Bounce Metric vs Unique Pageviews",
+   xlab = "Unique Pageviews",
+   ylab = "Bounce Metric",
+   pch = 16,
+   col = rgb(0, 0, 1, 0.35))
+abline(lm(BounceMetric ~ UniquePageviews, data = clean_data), col = "red", lwd = 2)
+
+boxplot(BounceMetric ~ Continent,
+      data = clean_data,
+      main = "Bounce Metric by Continent",
+      col = "skyblue",
+      las = 2)
+
+boxplot(BounceMetric ~ SourceGroup,
+      data = clean_data,
+      main = "Bounce Metric by Source Group",
+      col = "tomato",
+      las = 2)
+
+dev.off()
+
+# Multiple regression model for bounces
+model_bounces <- lm(
+BounceMetric ~ TimeOnPage + Exits + UniquePageviews + Visits + Continent + SourceGroup,
+data = clean_data
+)
+
+summary_bounces <- summary(model_bounces)
+
+print(summary_bounces)
+
+# VIF check
+vif_bounces <- vif(model_bounces)
+print(vif_bounces)
+
+# Save model output
+capture.output(
+summary_bounces,
+vif_bounces,
+file = "outputs/models/task5_bounces_model.txt"
+)
+
+write.csv(tidy(model_bounces), "outputs/models/task5_bounces_coefficients.csv", row.names = FALSE)
+write.csv(glance(model_bounces), "outputs/models/task5_bounces_fit.csv", row.names = FALSE)
+
+# Regression output image
+png("outputs/plots/17_task5_bounces_regression_output.png", width = 1400, height = 1000)
+plot.new()
+text(
+0.05, 0.95,
+paste(capture.output(print(summary_bounces)), collapse = "\n"),
+adj = c(0, 1),
+cex = 0.68,
+family = "mono"
+)
+dev.off()
+
+# Diagnostic plots
+png("outputs/plots/18_task5_bounces_diagnostic_plots.png", width = 1400, height = 1200)
+par(mfrow = c(2, 2))
+plot(model_bounces)
+dev.off()
+
+# ANOVA tests for categorical effects on bounce metric
+anova_bounce_continent <- aov(BounceMetric ~ Continent, data = clean_data)
+anova_bounce_source <- aov(BounceMetric ~ SourceGroup, data = clean_data)
+
+print(summary(anova_bounce_continent))
+print(summary(anova_bounce_source))
+
+capture.output(
+summary(anova_bounce_continent),
+summary(anova_bounce_source),
+file = "outputs/models/task5_bounce_anova.txt"
+)
+
+# ===================================================================
+# 5. FINAL MODEL COMPARISON
+# ===================================================================
+
+model_comparison <- data.frame(
+BusinessTask = c(
+  "Task 2: Unique Pageviews depend on Visits",
+  "Task 3: Factors affecting Exits",
+  "Task 4: Factors affecting Time on Page",
+  "Task 5: Factors impacting Bounces"
+),
+Model = c(
+  "UniquePageviews ~ Visits",
+  "Exits ~ Bounces + TimeOnPage + UniquePageviews + Visits + Continent + SourceGroup",
+  "TimeOnPage ~ Bounces + Exits + UniquePageviews + Visits + Continent + SourceGroup",
+  "BounceMetric ~ TimeOnPage + Exits + UniquePageviews + Visits + Continent + SourceGroup"
+),
+R_Squared = c(
+  summary_pageviews$r.squared,
+  summary_exits$r.squared,
+  summary_time$r.squared,
+  summary_bounces$r.squared
+),
+Adjusted_R_Squared = c(
+  summary_pageviews$adj.r.squared,
+  summary_exits$adj.r.squared,
+  summary_time$adj.r.squared,
+  summary_bounces$adj.r.squared
+),
+P_Value = c(
+  pf(
+    summary_pageviews$fstatistic[1],
+    summary_pageviews$fstatistic[2],
+    summary_pageviews$fstatistic[3],
+    lower.tail = FALSE
+  ),
+  pf(
+    summary_exits$fstatistic[1],
+    summary_exits$fstatistic[2],
+    summary_exits$fstatistic[3],
+    lower.tail = FALSE
+  ),
+  pf(
+    summary_time$fstatistic[1],
+    summary_time$fstatistic[2],
+    summary_time$fstatistic[3],
+    lower.tail = FALSE
+  ),
+  pf(
+    summary_bounces$fstatistic[1],
+    summary_bounces$fstatistic[2],
+    summary_bounces$fstatistic[3],
+    lower.tail = FALSE
+  )
+)
+)
+
+print(model_comparison)
+
+write.csv(model_comparison, "outputs/models/final_model_comparison.csv", row.names = FALSE)
+
+# Model comparison chart
+png("outputs/plots/19_final_model_comparison.png", width = 1400, height = 900)
+par(mfrow = c(2, 2))
+
+barplot(
+model_comparison$R_Squared,
+names.arg = c("Pageviews", "Exits", "Time", "Bounces"),
+main = "Model Comparison: R-squared",
+ylab = "R-squared",
+col = c("steelblue", "tomato", "purple", "orange"),
+ylim = c(0, 1)
+)
+
+barplot(
+model_comparison$Adjusted_R_Squared,
+names.arg = c("Pageviews", "Exits", "Time", "Bounces"),
+main = "Model Comparison: Adjusted R-squared",
+ylab = "Adjusted R-squared",
+col = c("steelblue", "tomato", "purple", "orange"),
+ylim = c(0, 1)
+)
+
+plot.new()
+text(
+0.05, 0.95,
+paste(capture.output(print(model_comparison)), collapse = "\n"),
+adj = c(0, 1),
+cex = 0.75,
+family = "mono"
+)
+
+plot.new()
+text(0.1, 0.9, "Business Questions Answered", adj = c(0, 1), cex = 1.4, font = 2)
+text(
+0.1, 0.75,
+paste(
+  "1. Variables summarised using descriptive statistics and plots.\n",
+  "2. Unique pageviews tested against visits using correlation and regression.\n",
+  "3. Exits modelled using engagement, traffic, continent, and source variables.\n",
+  "4. Time on page modelled using traffic and engagement variables.\n",
+  "5. Bounces modelled using traffic, exits, time, continent, and source group."
+),
+adj = c(0, 1),
+cex = 1.0
+)
+
+dev.off()
+
+# ===================================================================
+# 6. SAVE COMPLETE MODEL OUTPUTS
+# ===================================================================
+
+sink("outputs/models/all_model_outputs.txt")
+
+cat("====================================================\n")
+cat("WEB ANALYTICS MODEL OUTPUTS - www.datadb.com\n")
+cat("====================================================\n\n")
+
+cat("DATA CLEANING NOTE:\n")
+cat(bounce_metric_note, "\n\n")
+
+cat("TASK 2: UNIQUE PAGEVIEWS DEPENDING ON VISITS\n")
+cat("----------------------------------------------------\n")
+print(summary_pageviews)
+cat("\nPearson correlation:\n")
+print(cor_unique_visits_pearson)
+cat("\nSpearman correlation:\n")
+print(cor_unique_visits_spearman)
+
+cat("\n\nTASK 3: FACTORS AFFECTING EXITS\n")
+cat("----------------------------------------------------\n")
+print(summary_exits)
+cat("\nVIF:\n")
+print(vif_exits)
+
+cat("\n\nTASK 4: FACTORS AFFECTING TIME ON PAGE\n")
+cat("----------------------------------------------------\n")
+print(summary_time)
+cat("\nVIF:\n")
+print(vif_time)
+
+cat("\n\nTASK 5: FACTORS IMPACTING BOUNCES\n")
+cat("----------------------------------------------------\n")
+print(summary_bounces)
+cat("\nVIF:\n")
+print(vif_bounces)
+cat("\nANOVA: BounceMetric by Continent\n")
+print(summary(anova_bounce_continent))
+cat("\nANOVA: BounceMetric by Source Group\n")
+print(summary(anova_bounce_source))
+
+cat("\n\nFINAL MODEL COMPARISON\n")
+cat("----------------------------------------------------\n")
+print(model_comparison)
+
+sink()
+
+# ===================================================================
+# 7. FINAL BUSINESS SUMMARY FOR CONSOLE
+# ===================================================================
+
+cat("\n==============================================\n")
+cat("FINAL BUSINESS QUESTION SUMMARY\n")
+cat("==============================================\n\n")
+
+cat("Task 1: Data summarisation completed.\n")
+cat("- Descriptive statistics, frequency tables, histograms, boxplots, and grouped summaries were created.\n\n")
+
+cat("Task 2: Unique pageviews vs visits tested.\n")
+cat("- R-squared:", round(summary_pageviews$r.squared, 3), "\n")
+cat("- Model p-value:",
+  signif(model_comparison$P_Value[1], 4), "\n\n")
+
+cat("Task 3: Factors affecting exits tested.\n")
+cat("- R-squared:", round(summary_exits$r.squared, 3), "\n")
+cat("- Model p-value:",
+  signif(model_comparison$P_Value[2], 4), "\n\n")
+
+cat("Task 4: Factors affecting time on page tested.\n")
+cat("- R-squared:", round(summary_time$r.squared, 3), "\n")
+cat("- Model p-value:",
+  signif(model_comparison$P_Value[3], 4), "\n\n")
+
+cat("Task 5: Factors impacting bounces tested.\n")
+cat("- R-squared:", round(summary_bounces$r.squared, 3), "\n")
+cat("- Model p-value:",
+  signif(model_comparison$P_Value[4], 4), "\n\n")
+
+cat("All outputs have been saved in the 'outputs' folder.\n")
+cat("Use the plots, tables, and model outputs for your screenshots and README.\n")
+
+# Save session information
+capture.output(sessionInfo(), file = "outputs/session_info.txt")

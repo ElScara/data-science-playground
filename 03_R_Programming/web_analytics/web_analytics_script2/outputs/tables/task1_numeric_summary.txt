@@ -1,0 +1,28 @@
+                   vars    n   mean     sd median trimmed    mad min     max   range
+Bounces               1 4679   0.31   1.08      0    0.11   0.00   0    30.0    30.0
+Exits                 2 4679   0.85   1.32      1    0.66   1.48   0    36.0    36.0
+TimeOnPage            3 4679 358.31 930.61    125  219.32 160.12   0 46745.0 46745.0
+UniquePageviews       4 4679   1.39   1.33      1    1.15   0.00   1    45.0    44.0
+Visits                5 4679   1.32   1.25      1    1.11   0.00   1    45.0    44.0
+BouncesNew            6 4679   0.00   0.01      0    0.00   0.00   0     0.3     0.3
+ZeroVisitActivity     7 4679   0.00   0.00      0    0.00   0.00   0     0.0     0.0
+PageviewVisitIssue    8 4679   0.05   0.22      0    0.00   0.00   0     1.0     1.0
+AvgTimeOnPage         9 4679 303.46 870.12    112  186.64 143.81   0 46745.0 46745.0
+ViewsPerVisit        10 4679   1.05   0.23      1    1.00   0.00   1     4.0     3.0
+BouncePerVisit       11 4679   0.12   0.28      0    0.05   0.00   0     1.0     1.0
+ExitPerVisit         12 4679   0.58   0.51      1    0.58   0.00   0     4.0     4.0
+BounceMetric         13 4679   0.31   1.08      0    0.11   0.00   0    30.0    30.0
+                    skew kurtosis    se
+Bounces            12.76   283.79  0.02
+Exits              10.55   224.41  0.02
+TimeOnPage         28.84  1342.27 13.60
+UniquePageviews    15.04   381.06  0.02
+Visits             17.04   478.55  0.02
+BouncesNew         12.76   283.79  0.00
+ZeroVisitActivity    NaN      NaN  0.00
+PageviewVisitIssue  3.97    13.77  0.00
+AvgTimeOnPage      34.85  1762.16 12.72
+ViewsPerVisit       5.19    31.04  0.00
+BouncePerVisit      2.13     3.32  0.00
+ExitPerVisit        0.12    -0.62  0.01
+BounceMetric       12.76   283.79  0.02

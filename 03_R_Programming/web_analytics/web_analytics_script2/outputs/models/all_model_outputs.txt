@@ -1,0 +1,234 @@
+====================================================
+WEB ANALYTICS MODEL OUTPUTS - www.datadb.com
+====================================================
+
+DATA CLEANING NOTE:
+Bounces appears to be a percentage/proportion-style variable, so Bounces was used as the bounce metric. 
+
+TASK 2: UNIQUE PAGEVIEWS DEPENDING ON VISITS
+----------------------------------------------------
+
+Call:
+lm(formula = UniquePageviews ~ Visits, data = clean_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.4018 -0.0544 -0.0544 -0.0544  9.6700 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 0.023800   0.007162   3.323 0.000897 ***
+Visits      1.030622   0.003935 261.918  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.3362 on 4677 degrees of freedom
+Multiple R-squared:  0.9362,	Adjusted R-squared:  0.9362 
+F-statistic: 6.86e+04 on 1 and 4677 DF,  p-value: < 2.2e-16
+
+
+Pearson correlation:
+
+	Pearson's product-moment correlation
+
+data:  clean_data$Visits and clean_data$UniquePageviews
+t = 261.92, df = 4677, p-value < 2.2e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.9656802 0.9693408
+sample estimates:
+      cor 
+0.9675612 
+
+
+Spearman correlation:
+
+	Spearman's rank correlation rho
+
+data:  clean_data$Visits and clean_data$UniquePageviews
+S = 1692758324, p-value < 2.2e-16
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.9008513 
+
+
+
+TASK 3: FACTORS AFFECTING EXITS
+----------------------------------------------------
+
+Call:
+lm(formula = Exits ~ Bounces + TimeOnPage + UniquePageviews + 
+    Visits + Continent + SourceGroup, data = clean_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.78131 -0.46121 -0.02136  0.47038  2.15825 
+
+Coefficients:
+                                        Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                            9.807e-02  7.126e-02   1.376  0.16878    
+Bounces                                6.089e-01  1.979e-02  30.776  < 2e-16 ***
+TimeOnPage                             5.066e-05  8.213e-06   6.168 7.49e-10 ***
+UniquePageviews                        4.352e-01  2.258e-02  19.271  < 2e-16 ***
+Visits                                -3.338e-03  2.786e-02  -0.120  0.90466    
+ContinentAS                           -1.471e-02  7.214e-02  -0.204  0.83845    
+ContinentEU                           -1.992e-02  7.027e-02  -0.283  0.77686    
+ContinentN.America                    -4.477e-02  6.910e-02  -0.648  0.51714    
+ContinentOC                           -4.098e-02  7.618e-02  -0.538  0.59064    
+ContinentSA                           -7.929e-02  8.034e-02  -0.987  0.32371    
+SourceGroupfacebook                    1.532e-01  1.112e-01   1.377  0.16863    
+SourceGroupgoogle                      9.037e-02  2.136e-02   4.231 2.37e-05 ***
+SourceGroupOthers                     -7.176e-02  2.435e-02  -2.946  0.00323 ** 
+SourceGrouppublic.tableausoftware.com -5.520e-02  3.255e-02  -1.696  0.08993 .  
+SourceGroupreddit.com                 -1.410e-01  5.704e-02  -2.472  0.01349 *  
+SourceGroupt.co                       -7.025e-02  3.283e-02  -2.140  0.03243 *  
+SourceGrouptableausoftware.com        -1.524e-01  2.935e-02  -5.192 2.17e-07 ***
+SourceGroupvisualisingdata.com        -2.384e-01  4.056e-02  -5.879 4.42e-09 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.5152 on 4661 degrees of freedom
+Multiple R-squared:  0.8479,	Adjusted R-squared:  0.8473 
+F-statistic:  1528 on 17 and 4661 DF,  p-value: < 2.2e-16
+
+
+VIF:
+                     GVIF Df GVIF^(1/(2*Df))
+Bounces          8.108415  1        2.847528
+TimeOnPage       1.029758  1        1.014770
+UniquePageviews 15.917050  1        3.989618
+Visits          21.362199  1        4.621926
+Continent        1.065751  5        1.006388
+SourceGroup      1.082880  8        1.004989
+
+
+TASK 4: FACTORS AFFECTING TIME ON PAGE
+----------------------------------------------------
+
+Call:
+lm(formula = TimeOnPage ~ Bounces + Exits + UniquePageviews + 
+    Visits + Continent + SourceGroup, data = clean_data)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+ -3505   -298   -166     54  45977 
+
+Coefficients:
+                                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                            -28.943    126.584  -0.229   0.8192    
+Bounces                               -376.253     38.152  -9.862  < 2e-16 ***
+Exits                                  159.817     25.910   6.168 7.49e-10 ***
+UniquePageviews                        -15.397     41.673  -0.369   0.7118    
+Visits                                 229.521     49.377   4.648 3.44e-06 ***
+ContinentAS                             33.283    128.134   0.260   0.7951    
+ContinentEU                             36.633    124.805   0.294   0.7691    
+ContinentN.America                     110.298    122.730   0.899   0.3689    
+ContinentOC                             43.860    135.300   0.324   0.7458    
+ContinentSA                            366.768    142.608   2.572   0.0101 *  
+SourceGroupfacebook                    -55.323    197.614  -0.280   0.7795    
+SourceGroupgoogle                       56.082     38.000   1.476   0.1401    
+SourceGroupOthers                      -32.414     43.293  -0.749   0.4541    
+SourceGrouppublic.tableausoftware.com  -76.301     57.814  -1.320   0.1870    
+SourceGroupreddit.com                  -93.085    101.365  -0.918   0.3585    
+SourceGroupt.co                          5.174     58.342   0.089   0.9293    
+SourceGrouptableausoftware.com         -29.982     52.281  -0.573   0.5663    
+SourceGroupvisualisingdata.com         -95.394     72.285  -1.320   0.1870    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 915 on 4661 degrees of freedom
+Multiple R-squared:  0.03676,	Adjusted R-squared:  0.03325 
+F-statistic: 10.46 on 17 and 4661 DF,  p-value: < 2.2e-16
+
+
+VIF:
+                     GVIF Df GVIF^(1/(2*Df))
+Bounces          9.556741  1        3.091398
+Exits            6.520400  1        2.553507
+UniquePageviews 17.184782  1        4.145453
+Visits          21.263691  1        4.611257
+Continent        1.061802  5        1.006015
+SourceGroup      1.114796  8        1.006815
+
+
+TASK 5: FACTORS IMPACTING BOUNCES
+----------------------------------------------------
+
+Call:
+lm(formula = BounceMetric ~ TimeOnPage + Exits + UniquePageviews + 
+    Visits + Continent + SourceGroup, data = clean_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-5.2053 -0.1629  0.0088  0.1139  2.2480 
+
+Coefficients:
+                                        Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                           -5.304e-01  4.747e-02 -11.173  < 2e-16 ***
+TimeOnPage                            -5.432e-05  5.508e-06  -9.862  < 2e-16 ***
+Exits                                  2.774e-01  9.012e-03  30.776  < 2e-16 ***
+UniquePageviews                       -4.644e-02  1.582e-02  -2.935  0.00335 ** 
+Visits                                 6.005e-01  1.662e-02  36.129  < 2e-16 ***
+ContinentAS                           -1.066e-01  4.866e-02  -2.191  0.02851 *  
+ContinentEU                           -1.130e-01  4.739e-02  -2.385  0.01714 *  
+ContinentN.America                    -1.251e-01  4.660e-02  -2.684  0.00730 ** 
+ContinentOC                           -2.744e-02  5.141e-02  -0.534  0.59356    
+ContinentSA                            1.709e-02  5.423e-02   0.315  0.75267    
+SourceGroupfacebook                    2.228e-01  7.502e-02   2.970  0.00299 ** 
+SourceGroupgoogle                     -2.679e-02  1.444e-02  -1.856  0.06356 .  
+SourceGroupOthers                      8.191e-03  1.645e-02   0.498  0.61856    
+SourceGrouppublic.tableausoftware.com -9.432e-03  2.197e-02  -0.429  0.66773    
+SourceGroupreddit.com                  1.170e-01  3.848e-02   3.041  0.00237 ** 
+SourceGroupt.co                        8.796e-02  2.213e-02   3.974 7.16e-05 ***
+SourceGrouptableausoftware.com         2.522e-02  1.986e-02   1.270  0.20421    
+SourceGroupvisualisingdata.com         8.249e-02  2.744e-02   3.006  0.00266 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.3477 on 4661 degrees of freedom
+Multiple R-squared:  0.8975,	Adjusted R-squared:  0.8971 
+F-statistic:  2401 on 17 and 4661 DF,  p-value: < 2.2e-16
+
+
+VIF:
+                     GVIF Df GVIF^(1/(2*Df))
+TimeOnPage       1.016944  1        1.008436
+Exits            5.463392  1        2.337390
+UniquePageviews 17.153578  1        4.141688
+Visits          16.688669  1        4.085177
+Continent        1.056717  5        1.005532
+SourceGroup      1.103670  8        1.006184
+
+ANOVA: BounceMetric by Continent
+              Df Sum Sq Mean Sq F value Pr(>F)   
+Continent      5     21   4.233   3.613 0.0029 **
+Residuals   4673   5476   1.172                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+ANOVA: BounceMetric by Source Group
+              Df Sum Sq Mean Sq F value Pr(>F)    
+SourceGroup    8    128   15.95   13.87 <2e-16 ***
+Residuals   4670   5369    1.15                   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+FINAL MODEL COMPARISON
+----------------------------------------------------
+                               BusinessTask
+1 Task 2: Unique Pageviews depend on Visits
+2           Task 3: Factors affecting Exits
+3    Task 4: Factors affecting Time on Page
+4         Task 5: Factors impacting Bounces
+                                                                                   Model
+1                                                               UniquePageviews ~ Visits
+2      Exits ~ Bounces + TimeOnPage + UniquePageviews + Visits + Continent + SourceGroup
+3      TimeOnPage ~ Bounces + Exits + UniquePageviews + Visits + Continent + SourceGroup
+4 BounceMetric ~ TimeOnPage + Exits + UniquePageviews + Visits + Continent + SourceGroup
+  R_Squared Adjusted_R_Squared      P_Value
+1 0.9361747         0.93616109 0.000000e+00
+2 0.8478769         0.84732209 0.000000e+00
+3 0.0367607         0.03324749 3.056947e-28
+4 0.8975006         0.89712672 0.000000e+00

@@ -1,0 +1,43 @@
+
+Call:
+lm(formula = TimeOnPage ~ Bounces + Exits + UniquePageviews + 
+    Visits + Continent + SourceGroup, data = clean_data)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+ -3505   -298   -166     54  45977 
+
+Coefficients:
+                                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                            -28.943    126.584  -0.229   0.8192    
+Bounces                               -376.253     38.152  -9.862  < 2e-16 ***
+Exits                                  159.817     25.910   6.168 7.49e-10 ***
+UniquePageviews                        -15.397     41.673  -0.369   0.7118    
+Visits                                 229.521     49.377   4.648 3.44e-06 ***
+ContinentAS                             33.283    128.134   0.260   0.7951    
+ContinentEU                             36.633    124.805   0.294   0.7691    
+ContinentN.America                     110.298    122.730   0.899   0.3689    
+ContinentOC                             43.860    135.300   0.324   0.7458    
+ContinentSA                            366.768    142.608   2.572   0.0101 *  
+SourceGroupfacebook                    -55.323    197.614  -0.280   0.7795    
+SourceGroupgoogle                       56.082     38.000   1.476   0.1401    
+SourceGroupOthers                      -32.414     43.293  -0.749   0.4541    
+SourceGrouppublic.tableausoftware.com  -76.301     57.814  -1.320   0.1870    
+SourceGroupreddit.com                  -93.085    101.365  -0.918   0.3585    
+SourceGroupt.co                          5.174     58.342   0.089   0.9293    
+SourceGrouptableausoftware.com         -29.982     52.281  -0.573   0.5663    
+SourceGroupvisualisingdata.com         -95.394     72.285  -1.320   0.1870    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 915 on 4661 degrees of freedom
+Multiple R-squared:  0.03676,	Adjusted R-squared:  0.03325 
+F-statistic: 10.46 on 17 and 4661 DF,  p-value: < 2.2e-16
+
+                     GVIF Df GVIF^(1/(2*Df))
+Bounces          9.556741  1        3.091398
+Exits            6.520400  1        2.553507
+UniquePageviews 17.184782  1        4.145453
+Visits          21.263691  1        4.611257
+Continent        1.061802  5        1.006015
+SourceGroup      1.114796  8        1.006815

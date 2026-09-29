@@ -1,0 +1,5 @@
+"BusinessTask","Model","R_Squared","Adjusted_R_Squared","P_Value"
+"Task 2: Unique Pageviews depend on Visits","UniquePageviews ~ Visits",0.936174733123823,0.936161086498449,0
+"Task 3: Factors affecting Exits","Exits ~ Bounces + TimeOnPage + UniquePageviews + Visits + Continent + SourceGroup",0.847876923266516,0.84732208689997,0
+"Task 4: Factors affecting Time on Page","TimeOnPage ~ Bounces + Exits + UniquePageviews + Visits + Continent + SourceGroup",0.0367606985182699,0.0332474893088321,3.05694731536434e-28
+"Task 5: Factors impacting Bounces","BounceMetric ~ TimeOnPage + Exits + UniquePageviews + Visits + Continent + SourceGroup",0.897500567247739,0.897126722502666,0

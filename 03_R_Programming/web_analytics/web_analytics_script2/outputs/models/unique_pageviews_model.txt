@@ -1,0 +1,41 @@
+
+	Pearson's product-moment correlation
+
+data:  clean_data$Visits and clean_data$UniquePageviews
+t = 261.92, df = 4677, p-value < 2.2e-16
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.9656802 0.9693408
+sample estimates:
+      cor 
+0.9675612 
+
+
+	Spearman's rank correlation rho
+
+data:  clean_data$Visits and clean_data$UniquePageviews
+S = 1692758324, p-value < 2.2e-16
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.9008513 
+
+
+Call:
+lm(formula = UniquePageviews ~ Visits, data = clean_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.4018 -0.0544 -0.0544 -0.0544  9.6700 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 0.023800   0.007162   3.323 0.000897 ***
+Visits      1.030622   0.003935 261.918  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.3362 on 4677 degrees of freedom
+Multiple R-squared:  0.9362,	Adjusted R-squared:  0.9362 
+F-statistic: 6.86e+04 on 1 and 4677 DF,  p-value: < 2.2e-16
+
