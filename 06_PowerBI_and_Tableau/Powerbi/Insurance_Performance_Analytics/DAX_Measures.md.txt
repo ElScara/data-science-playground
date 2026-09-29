@@ -1,0 +1,35 @@
+Avg_Loss_Ratio = 
+CALCULATE(
+    AVERAGE(finalapi[LOSS_RATIO]),
+    NOT(ISBLANK(finalapi[LOSS_RATIO]))
+)
+
+Avg_Retention_Ratio = AVERAGE(finalapi[RETENTION_RATIO])
+
+Commercial lines = DIVIDE(
+    SUM(finalapi[CL_BOUND_CT_MDS]) + SUM(finalapi[CL_BOUND_CT_SBZ]) + SUM(finalapi[CL_BOUND_CT_eQT]),
+    SUM(finalapi[CL_QUO_CT_MDS]) + SUM(finalapi[CL_QUO_CT_SBZ]) + SUM(finalapi[CL_QUO_CT_eQT]),
+    0) 
+
+Hit_Ratio_CL_eQT = DIVIDE(SUM(finalapi[CL_BOUND_CT_eQT]), SUM(finalapi[CL_QUO_CT_eQT]), 0)
+
+Hit_Ratio_CL_MDS = DIVIDE(SUM([CL_BOUND_CT_MDS]), SUM([CL_QUO_CT_MDS]), 0)
+
+Hit_Ratio_CL_SBZ = DIVIDE(SUM(finalapi[CL_BOUND_CT_SBZ]), SUM(finalapi[CL_QUO_CT_SBZ]), 0)
+
+Hit_Ratio_PL_APPLIED = DIVIDE(SUM(finalapi[PL_BOUND_CT_APPLIED]), SUM(finalapi[PL_QUO_CT_APPLIED]), 0)
+
+Hit_Ratio_PL_ELINKS = DIVIDE(SUM(finalapi[PL_BOUND_CT_ELINKS]), SUM(finalapi[PL_QUO_CT_ELINKS]), 0)
+
+Hit_Ratio_PL_eQTte = DIVIDE(SUM(finalapi[PL_BOUND_CT_eQTte]), SUM(finalapi[PL_QUO_CT_eQTte]), 0)
+
+Hit_Ratio_PL_PLRANK = DIVIDE(SUM(finalapi[PL_BOUND_CT_PLRANK]), SUM(finalapi[PL_QUO_CT_PLRANK]), 0)
+
+Hit_Ratio_PL_TRANSACTNOW = DIVIDE(SUM(finalapi[PL_BOUND_CT_TRANSACTNOW]), SUM(finalapi[PL_QUO_CT_TRANSACTNOW]), 0)
+
+Personal lines = DIVIDE(
+    SUM(finalapi[PL_BOUND_CT_ELINKS]) + SUM(finalapi[PL_BOUND_CT_PLRANK]) + SUM(finalapi[PL_BOUND_CT_eQTte]) + SUM(finalapi[PL_BOUND_CT_APPLIED]) + SUM(finalapi[PL_BOUND_CT_TRANSACTNOW]),
+    SUM(finalapi[PL_QUO_CT_ELINKS]) + SUM(finalapi[PL_QUO_CT_PLRANK]) + SUM(finalapi[PL_QUO_CT_eQTte]) + SUM(finalapi[PL_QUO_CT_APPLIED]) + SUM(finalapi[PL_QUO_CT_TRANSACTNOW]),
+    0) 
+
+Total_Written_Premium = SUM(finalapi[WRTN_PREM_AMT])
