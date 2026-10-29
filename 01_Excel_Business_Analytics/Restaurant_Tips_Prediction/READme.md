@@ -3,11 +3,11 @@
 A statistical modeling and exploratory data analysis project built in Excel to identify key determinants of restaurant tipping behavior and quantify their predictive power using multiple linear regression.
 
 ## 📁 Repository Contents
-* **`Restaurant_Tips_Dataset_Model.xlsx`**: The core analytical workbook featuring summary statistics, correlation matrices, regression outputs, and the tip prediction model.
-* **`restaurant_tips_dataset.xlsx`**: The clean source dataset containing dining transaction attributes (bill amount, tip, gender, smoking status, day, time, party size).
-* **`Regression_Analysis_Report.pdf`**: Detailed technical and statistical documentation interpreting model coefficients, $R^2$, $p$-values, and business implications.
-* **`Restaurant_Tips_Prediction_brief.pdf`**: Original project scope, analytical hypotheses, and business objectives.
-* **`Restaurant_Tips_Prediction_Visuals.pdf`**: High-resolution chart decks illustrating variable distributions, correlation heatmaps, and regression residual diagnostics.
+* [Restaurant_Tips_Dataset_Model.xlsx](Restaurant_Tips_Dataset_Model.xlsx): The core analytical workbook featuring summary statistics, correlation matrices, regression outputs, and the tip prediction model.
+* [restaurant_tips_dataset.xlsx](restaurant_tips_dataset.xlsx): The clean source dataset containing dining transaction attributes (bill amount, tip, gender, smoking status, day, time, party size).
+* [Regression_Analysis_Report.pdf](Regression_Analysis_Report.pdf): Detailed technical and statistical documentation interpreting model coefficients, $R^2$, $p$-values, and business implications.
+* [Restaurant_Tips_Prediction_brief.pdf](Restaurant_Tips_Prediction_brief.pdf): Original project scope, analytical hypotheses, and business objectives.
+* [Restaurant_Tips_Prediction_Visuals.pdf](Restaurant_Tips_Prediction_Visuals.pdf): High-resolution chart decks illustrating variable distributions, correlation heatmaps, and regression residual diagnostics.
 
 ## 🎯 Business Objective
 To assist restaurant management in understanding table-level monetization drivers and server compensation patterns. By modeling tip amounts against total bill, party size, dining timeframe, and customer demographics, the analysis isolates actionable insights for shift scheduling and floor optimization.
