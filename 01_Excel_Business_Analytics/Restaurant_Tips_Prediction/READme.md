@@ -9,8 +9,9 @@ An econometric and statistical modeling project implemented in Excel to predict 
 * [Restaurant_Tips_Prediction_brief.pdf](Restaurant_Tips_Prediction_brief.pdf): Project scope, business context, and problem statement.
 * [Restaurant_Tips_Prediction_Visuals.pdf](Restaurant_Tips_Prediction_Visuals.pdf): Step-by-step visual documentation capturing data preparation, formula logic, Toolpak configuration, and model evaluation metrics.
 
+
 ## 🎯 Business Objective
-To determine which dining transaction attributes (such as ticket size, party scale, shift timing, and customer demographics) serve as statistically significant predictors of tip amounts, and to assess whether linear modeling provides reliable forecasting for shift compensation.
+To determine which dining transaction attributes (total bill, party size, shift time, day of the week, and customer profile) serve as statistically significant predictors of tip amounts, and to assess whether linear modeling provides reliable forecasting for shift compensation.
 
 ## 🛠️ Statistical Techniques & Excel Architecture
 * **Feature Engineering & Categorical Encoding:** Transformed qualitative attributes using conditional Excel logic (`IF`, nested `IF`s) into numeric dummy variables (`sex_num`, `smoker_num`, `day_num`, `time_num`).
