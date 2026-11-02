@@ -1,72 +1,69 @@
 # Web Analytics & User Behavior Modeling
 
-An exploratory data analysis and statistical modeling project implemented in R to evaluate user engagement, assess the relationship between traffic volume and unique page views, and identify key drivers of user exits and session metrics using ordinary least squares (OLS) regression and analysis of variance (ANOVA).
+An exploratory data analysis and statistical modeling project implemented in R to evaluate user engagement, assess the relationship between traffic volume and unique page views, and identify key drivers of user exits and session metrics using ordinary least squares (OLS) regression.
 
 ---
 
 ## 📁 Repository Contents
 
-* [`1555058318_internet_dataset.xlsx`](1555058318_internet_dataset.xlsx): Source web analytics dataset containing session metrics and user categorical dimensions.
-* [`web_analytics_script.R`](web_analytics_script.R): Main R script containing data ingestion, descriptive summarization, correlation testing, diagnostic plotting, and linear regression workflows.
-* [`User_Behavior_Statistical_Analysis.pdf`](User_Behavior_Statistical_Analysis.pdf): Comprehensive report detailing statistical findings and behavioral insights derived from model outputs.
-* [`Web_Analytics_Project_Overview.pdf`](Web_Analytics_Project_Overview.pdf): High-level project summary highlighting analytical objectives and methodology.
-* [`web_analytics_brief.pdf`](web_analytics_brief.pdf): Project scope, business problem statement, and task guidelines.
-* [`web_analytics_plot_visuals.pdf`](web_analytics_plot_visuals.pdf): Visual outputs, including scatter plots with fitted regression lines and categorical box plots.
+- [1555058318_internet_dataset.xlsx](1555058318_internet_dataset.xlsx): Raw web traffic and session metrics dataset in Excel format.
+- [web_analytics_script.R](web_analytics_script.R): Main R script containing data ingestion, descriptive summarization, correlation testing, linear regression workflows, and diagnostic checks.
+- [User_Behavior_Statistical_Analysis.pdf](User_Behavior_Statistical_Analysis.pdf): Comprehensive statistical report detailing model coefficients, variance tests, and behavioral insights.
+- [Web_Analytics_Project_Overview.pdf](Web_Analytics_Project_Overview.pdf): Executive summary highlighting business background, analytical questions, and high-level findings.
+- [web_analytics_brief.pdf](web_analytics_brief.pdf): Project scope, analytical problem statement, and task guidelines.
+- [web_analytics_plot_visuals.pdf](web_analytics_plot_visuals.pdf): Visual outputs compiling regression scatter plots, confidence bands, and categorical factor distributions.
+- [web_analytics_script2/](web_analytics_script2): Supplementary scripts and exploratory workflow iterations.
 
 ---
 
 ## 🎯 Analytical Objectives
 
-* **Metric Correlation:** Quantify whether `Uniquepageviews` depends on `Visits` using Pearson correlation testing and linear regression modeling.
-* **Exit Driver Analysis:** Determine which website engagement indicators (`Bounces`, `Timeinpage`, `Uniquepageviews`, `Visits`, `Continent`, and `Source.group`) significantly impact total user `Exits`.
-* **Multivariate Influence:** Examine secondary behavioral models assessing predictors that influence `Timeinpage` and user bounce behavior (`Bounces`).
+- **Traffic & Pageview Association:** Quantify the linear relationship between `Visits` and `Uniquepageviews` using Pearson correlation testing and bivariate OLS modeling.
+- **Exit Driver Identification:** Determine which website engagement indicators (`Bounces`, `Continent`, `Source.group`, `Timeinpage`, `Uniquepageviews`, and `Visits`) significantly drive user `Exits`.
+- **Multicollinearity & Model Selection:** Detect variance inflation using the Variance Inflation Factor (`vif()`) and isolate the optimal predictor subset via bidirectional stepwise selection (`step()`).
+- **Secondary Engagement Models:** Evaluate complementary regression architectures modeling drivers of duration (`Timeinpage`) and single-page abandonment (`Bounces`).
 
 ---
 
 ## 🛠️ Tools & Libraries
 
-* **Language:** R
-* **Data Manipulation & Ingestion:** `readxl`, `dplyr`
-* **Visualization:** `ggplot2`
-* **Statistical Diagnostics:** `car` (Variance Inflation Factor evaluation via `vif()`)
-
----
-
-## 💡 Key Statistical Findings
-
-* **Correlation Between Visits & Unique Pageviews:** A strong positive linear correlation exists between `Visits` and `Uniquepageviews` ($r \approx 0.814, p < 2.2 \times 10^{-16}$), confirming that unique page views significantly depend on visit volume.
-* **Primary Drivers of Exits:** Analysis of variance (ANOVA) demonstrates that **`Bounces`** and **`Uniquepageviews`** have the largest, most significant impact on website `Exits` ($p < 2.2 \times 10^{-16}$), followed by categorical dimensions (`Source.group` and `Continent`) and `Timeinpage`. Total `Visits` has comparatively lower relative significance in predicting exits.
-* **Time on Page Predictors:** Evaluating factors affecting `Timeinpage` reveals that session duration is significantly influenced by `Exits`, `Uniquepageviews`, `Visits`, and `Bounces`, whereas `Source.group` shows no significant direct relationship.
-* **Collinearity & Model Selection:** Bidirectional stepwise model selection (`step()`) eliminates redundant predictors to isolate the most parsimonious linear model for web exits.
+- **Language:** R
+- **Environment Automation:** `rstudioapi` (automatic script working directory resolution)
+- **Data Ingestion & Wrangling:** `readxl`, `dplyr`
+- **Visualization:** `ggplot2`
+- **Regression Diagnostics:** `car` (used for `vif()` multicollinearity analysis)
 
 ---
 
 ## 🔬 Methodology & Script Workflow
 
-The analytical steps executed in [`web_analytics_script.R`](web_analytics_script.R) include:
+The analytical pipeline executed in [web_analytics_script.R](web_analytics_script.R) follows seven structured phases:
 
-1. **Data Ingestion & Cleaning:**
-   * Loads `1555058318_internet_dataset.xlsx` using local path detection with interactive fallback.
-   * Standardizes column names to syntactic R formats via `make.names()` and encodes categorical attributes (`Continent`, `Source.group`) as factors.
-2. **Exploratory Data Summaries:**
-   * Computes parametric and non-parametric statistics (`min`, `max`, `mean`, `median`, `sd`) and evaluates categorical cardinality.
-3. **Bivariate Modeling (`Uniquepageviews ~ Visits`):**
-   * Conducts Pearson correlation analysis (`cor.test`) and fits a bivariate linear model (`lm`).
-   * Visualizes relationship using `ggplot2` with an OLS regression trendline.
-4. **Multivariate Regression & Diagnostics (`Exits`):**
-   * Fits full OLS regression modeling `Exits` against engagement factors.
-   * Evaluates variance analysis via `anova()` and checks collinearity via `vif()`.
-   * Implements automated bidirectional stepwise variable selection (`step(..., direction = "both")`).
-5. **Engagement Diagnostics & Secondary Models:**
-   * Generates distribution plots and categorical box plots segmented by `Continent` and `Source.group`.
-   * Evaluates complementary models assessing drivers of session duration (`Timeinpage`) and user bounce behavior (`Bounces`).
+1. **Ingestion & Environment Setup:**
+   - Detects the script folder using `rstudioapi` or provides an interactive `file.choose()` fallback.
+   - Loads `1555058318_internet_dataset.xlsx` and standardizes headers into valid R identifiers with `make.names()`.
+2. **Exploratory Summaries:**
+   - Evaluates parametric and non-parametric distributions (`min`, `max`, `mean`, `median`, `sd`) and checks categorical factor cardinality.
+3. **Factor Encoding:**
+   - Explicitly recodes categorical predictors (`Continent`, `Source.group`) into R `factor` data types.
+4. **Bivariate Modeling (`Uniquepageviews ~ Visits`):**
+   - Conducts Pearson correlation testing (`cor.test`) and fits a linear model (`lm`).
+   - Generates scatter plots fitted with an OLS regression trendline.
+5. **Multivariate Regression & Diagnostics (`Exits`):**
+   - Fits the full model: `Exits ~ Bounces + Continent + Source.group + Timeinpage + Uniquepageviews + Visits`.
+   - Evaluates variance decomposition with `anova()` and checks for severe collinearity with `vif()` (safeguarded against aliased terms).
+   - Executes automated bidirectional stepwise selection (`step(..., direction = "both")`) to identify the minimum AIC model.
+6. **Engagement Visualizations:**
+   - Produces diagnostic scatter plots (`Exits` vs. `Bounces`, `Timeinpage`, `Uniquepageviews`, and `Visits`) and categorical factor distributions (`Continent`, `Source.group`) using `ggplot2`.
+7. **Secondary Multivariate Models:**
+   - Examines behavioral drivers of session duration (`Timeinpage`) and single-page bounce rates (`Bounces`) against engagement metrics.
 
 ---
 
-## 🚀 Running the Script
+## 🚀 Getting Started
 
-1. Clone or download this repository directory.
-2. Open RStudio and set your working directory to this folder (or open the script directly).
-3. Run the script:
-   ```R
-   source("web_analytics_script.R")
+### 1. Prerequisites
+Install all required packages from CRAN:
+
+```r
+install.packages(c("readxl", "dplyr", "ggplot2", "car", "rstudioapi"))
