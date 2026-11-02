@@ -12,7 +12,7 @@ An exploratory data analysis and statistical modeling project implemented in R t
 - [Web_Analytics_Project_Overview.pdf](Web_Analytics_Project_Overview.pdf): Executive summary highlighting business background, analytical questions, and high-level findings.
 - [web_analytics_brief.pdf](web_analytics_brief.pdf): Project scope, analytical problem statement, and task guidelines.
 - [web_analytics_plot_visuals.pdf](web_analytics_plot_visuals.pdf): Visual outputs compiling regression scatter plots, confidence bands, and categorical factor distributions.
-- [web_analytics_script2/](web_analytics_script2): Supplementary scripts and exploratory workflow iterations.
+
 
 ---
 
