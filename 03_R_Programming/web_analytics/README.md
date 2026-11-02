@@ -1,6 +1,6 @@
 # Web Analytics & User Behavior Modeling
 
-An exploratory data analysis and statistical modeling project implemented in R to evaluate user engagement, assess the relationship between traffic volume and unique page views, and identify key drivers of user exits and session metrics using ordinary least squares (OLS) regression.
+An exploratory data analysis and statistical modeling project implemented in R to evaluate user engagement, assess the relationship between traffic volume and unique page views, and identify key drivers of user exits and session metrics using ordinary least squares (OLS) regression and analysis of variance (ANOVA).
 
 ---
 
@@ -17,9 +17,9 @@ An exploratory data analysis and statistical modeling project implemented in R t
 
 ## 🎯 Analytical Objectives
 
-* **Metric Correlation:** Quantify the linear relationship between `Visits` and `Uniquepageviews` using Pearson correlation testing and bivariate regression modeling.
+* **Metric Correlation:** Quantify whether `Uniquepageviews` depends on `Visits` using Pearson correlation testing and linear regression modeling.
 * **Exit Driver Analysis:** Determine which website engagement indicators (`Bounces`, `Timeinpage`, `Uniquepageviews`, `Visits`, `Continent`, and `Source.group`) significantly impact total user `Exits`.
-* **Multivariate Influence:** Examine secondary behavioral models assessing predictors that influence `Timeinpage` and `Bounces`.
+* **Multivariate Influence:** Examine secondary behavioral models assessing predictors that influence `Timeinpage` and user bounce behavior (`Bounces`).
 
 ---
 
@@ -28,16 +28,16 @@ An exploratory data analysis and statistical modeling project implemented in R t
 * **Language:** R
 * **Data Manipulation & Ingestion:** `readxl`, `dplyr`
 * **Visualization:** `ggplot2`
-* **Statistical Diagnostics:** `car` (used for Variance Inflation Factor / multicollinearity evaluation via `vif()`)
+* **Statistical Diagnostics:** `car` (Variance Inflation Factor evaluation via `vif()`)
 
 ---
 
-## 💡 Key Analytical Findings
+## 💡 Key Statistical Findings
 
-* **Volume Scaling:** `Visits` and `Uniquepageviews` exhibit an almost perfect positive linear correlation ($r \approx 0.99$), confirming predictable baseline user acquisition across traffic channels.
-* **Primary Exit Drivers:** In multiple linear regression modeling, `Bounces` and `Visits` serve as the primary statistically significant predictors of user `Exits` ($p < 0.001$).
-* **Collinearity & Selection:** Substantial collinearity between visit volume metrics was diagnosed via `vif()`, and bidirectional stepwise regression successfully reduced model redundancy to isolate the most impactful engagement signals.
-* **Session Duration Impact:** Session duration (`Timeinpage`) exhibits minimal direct predictive power over exit spikes compared to direct bounce events.
+* **Correlation Between Visits & Unique Pageviews:** A strong positive linear correlation exists between `Visits` and `Uniquepageviews` ($r \approx 0.814, p < 2.2 \times 10^{-16}$), confirming that unique page views significantly depend on visit volume.
+* **Primary Drivers of Exits:** Analysis of variance (ANOVA) demonstrates that **`Bounces`** and **`Uniquepageviews`** have the largest, most significant impact on website `Exits` ($p < 2.2 \times 10^{-16}$), followed by categorical dimensions (`Source.group` and `Continent`) and `Timeinpage`. Total `Visits` has comparatively lower relative significance in predicting exits.
+* **Time on Page Predictors:** Evaluating factors affecting `Timeinpage` reveals that session duration is significantly influenced by `Exits`, `Uniquepageviews`, `Visits`, and `Bounces`, whereas `Source.group` shows no significant direct relationship.
+* **Collinearity & Model Selection:** Bidirectional stepwise model selection (`step()`) eliminates redundant predictors to isolate the most parsimonious linear model for web exits.
 
 ---
 
@@ -59,7 +59,7 @@ The analytical steps executed in [`web_analytics_script.R`](web_analytics_script
    * Implements automated bidirectional stepwise variable selection (`step(..., direction = "both")`).
 5. **Engagement Diagnostics & Secondary Models:**
    * Generates distribution plots and categorical box plots segmented by `Continent` and `Source.group`.
-   * Evaluates complementary OLS models assessing drivers of session duration (`Timeinpage`) and user bounce behavior (`Bounces`).
+   * Evaluates complementary models assessing drivers of session duration (`Timeinpage`) and user bounce behavior (`Bounces`).
 
 ---
 
