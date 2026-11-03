@@ -1,6 +1,6 @@
 # Student Social Media Addiction & Relationship Dynamics: Machine Learning Analysis
 
-A predictive modeling and exploratory data analysis project implemented in Python to examine the relationship between student social media habits, psychological well-being, and romantic relationship status. This project investigates whether behavioral indicators—such as daily screen time, platform choice, addiction score, sleep patterns, and interpersonal conflict—can effectively classify relationship dynamics using supervised classification algorithms.
+A predictive modeling and exploratory data analysis project implemented in Python to examine the relationship between student social media habits, psychological well-being, and romantic relationship status. This project investigates whether behavioral indicators (such as daily screen time, platform choice, addiction score, sleep patterns, and interpersonal conflict) can effectively classify relationship dynamics using supervised classification algorithms.
 
 ---
 
@@ -13,11 +13,11 @@ A predictive modeling and exploratory data analysis project implemented in Pytho
 
 ## 🎯 Project Objectives & Problem Statement
 
-* **Research Problem:** Identify how digital media dependency, psychological health, and demographic contexts correlate with interpersonal relationship outcomes among students aged 18–24.
+* **Research Problem:** Identify how digital media dependency, psychological health, and demographic contexts correlate with interpersonal relationship outcomes among students aged 18 to 24.
 * **Target Classification:** Predict multi-class `Relationship_Status` categorized into three distinct classes:
   1. `Single` (baseline independent students)
   2. `In Relationship` (students in committed partnerships)
-  3. `Complicated` (students experiencing relational ambiguity/conflict)
+  3. `Complicated` (students experiencing relational ambiguity or conflict)
 * **Comparative Machine Learning:** Train, tune, and evaluate multiple classification architectures to determine optimal generalization across imbalanced target classes.
 * **Feature Importance Evaluation:** Identify the primary behavioral drivers influencing relational outcomes.
 
