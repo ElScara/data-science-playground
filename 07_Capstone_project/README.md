@@ -46,7 +46,7 @@ The EDA notebook examines:
 - **Cost:** Price distribution and associations between cost and ratings.
 - **Engagement:** Customer vote totals and relationships with delivery services.
 
-Visualizations include bar charts, distributions, box plots, scatter plots, and a correlation heatmap. The notebook saves figures to `../reports/figures/` when those directories exist.
+Visualizations include bar charts, distributions, box plots, scatter plots, and a correlation heatmap. The notebook saves figures to `reports/figures/` relative to the capstone project folder.
 
 ### 3. Dashboard Preparation & Tableau
 
@@ -80,18 +80,20 @@ No screenshot is included by this README change; the image reference is intentio
 
 ## Reproducing the Analysis
 
-Clone the repository and open the capstone folder:
+Run the notebooks from `07_Capstone_project` in this order:
 
 ```bash
-git clone https://github.com/ElScara/data-science-playground.git
-cd data-science-playground/07_Capstone_project
-pip install pandas numpy matplotlib seaborn plotly openpyxl jupyter
+python -m pip install -r requirements.txt
 jupyter notebook
 ```
 
-**Important path limitations:** The notebooks were written against a different directory layout: some expect `../data/raw/data.xlsx`, `../data/raw/Country-Code.xlsx`, and `../data/processed/cleaned_data.csv`. These files and directories are **not** present at those paths in the current repository. One additional notebook expects a local `data.xlsx`. The included `zomato_cleaned.csv` may help with exploration, but its schema and cleaning lineage should be checked before substituting it into notebooks. To run the entire workflow, obtain the original raw inputs and adjust the file paths or refactor the notebooks to use the available dataset.
+1. `01_data_inspection_cleaning.ipynb` reads the included `zomato_cleaned.csv`, checks essential fields, removes missing names/cuisines and duplicate rows, and writes `data/processed/cleaned_data.csv`.
+2. `02_eda_analysis.ipynb` reads that generated file and saves figures under `reports/figures/`.
+3. `03_dashboard_prep.ipynb` creates `data/processed/cleaned_data_cuisine_exploded.csv` for Tableau.
 
-The first cleaning notebook also creates a `df_cleaned` object but later saves `df`; verify the intended cleaning output before relying on the exported file.
+**Provenance:** The original raw Excel data and country-code workbook are not committed. The reproducible workflow therefore starts from the existing `zomato_cleaned.csv` and does not recreate the complete original raw-data transformation. See [data provenance](data/README.md). The older `Untitled11.ipynb` remains an archival exploratory notebook and still references an unavailable `data.xlsx`.
+
+**Environment:** Install [requirements.txt](requirements.txt). Generated datasets and plots are ignored by Git. The Tableau workbook may have its own data-connection requirements.
 
 ## Interpretation & Limitations
 
