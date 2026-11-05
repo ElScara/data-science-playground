@@ -1,3 +1,4 @@
+![Insurance Dashboard](./Performance_Analytics_Dashboard.png)
 # Insurance Performance Analytics Dashboard
 
 A Power BI business intelligence project focused on analysing insurance underwriting performance, premium production, quote-to-bind conversion, policy retention, and loss ratios across Commercial and Personal Lines.
