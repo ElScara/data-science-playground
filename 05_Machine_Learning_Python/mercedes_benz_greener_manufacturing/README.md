@@ -74,17 +74,3 @@ The implementation pipeline inside [`_Mercedes_Benz_Greener_Manufacturing.ipynb`
    ```bash
    git clone [https://github.com/ElScara/data-science-playground.git](https://github.com/ElScara/data-science-playground.git)
    cd data-science-playground/05_Machine_Learning_Python/mercedes_benz_greener_manufacturing
-
-
-## Additional reproducibility and model-validation audit
-
-The original `train.csv` and `test.csv` are **not included** in this repository. The historical notebook and its reported workflow are retained for reference; its performance has not been independently rerun in this maintenance update. Its label encoding uses both training and competition test feature values, and it does not provide a separate labeled holdout evaluation.
-
-An optional [validation.py](validation.py) now provides a **separate, leakage-aware evaluation**: a mean-prediction baseline, 80/20 holdout, five-fold cross-validation on training data, and an XGBoost preprocessing pipeline fitted inside each fold. This is a new evaluation design, not a reproduction of the original notebook's PCA specification or its previously reported outputs.
-
-```bash
-python -m pip install -r requirements.txt
-python validation.py --train /path/to/original/train.csv
-```
-
-No new scores are claimed until the script is run on the original dataset. If validation results differ from the historical report, document both and explain the evaluation differences.

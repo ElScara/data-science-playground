@@ -216,7 +216,3 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-
-# Capstone generated outputs
-07_Capstone_project/data/processed/
-07_Capstone_project/reports/figures/
