@@ -46,7 +46,10 @@ The primary objectives of this project are to:
 
 The hit ratio measures the effectiveness of converting insurance quotations into bound policies.
 
-$$ \text{Hit Ratio} = \frac{\text{Bound Policies}}{\text{Quoted Policies}} \times 100 $$
+$$ 
+\text{Hit Ratio} = \frac{\text{Bound Policies}}{\text{Quoted Policies}} \times 100 
+$$
+
 A higher hit ratio generally indicates stronger quote conversion performance.
 
 The dashboard evaluates conversion performance across the following platforms:
