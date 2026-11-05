@@ -25,18 +25,6 @@ A portfolio of applied **data analytics, statistical modeling, machine learning,
 - **Business intelligence:** Power BI, DAX, Tableau, KPI reporting, and interactive dashboard design
 - **Communication:** Business briefs, visualizations, explanatory reports, and reproducible notebook workflows
 
-## Featured Visual Dashboards
-
-### E-Commerce Sales Dashboard
-
-[![E-Commerce sales dashboard](01_Excel_Business_Analytics/ECommerce_Dashboard/E_commerce_Dashboard.png)](01_Excel_Business_Analytics/ECommerce_Dashboard/README.md)
-
-### Insurance Performance Analytics
-
-[![Insurance performance analytics dashboard](06_PowerBI_and_Tableau/Powerbi/Insurance_Performance_Analytics/Performance_Analytics_Dashboard.png)](06_PowerBI_and_Tableau/Powerbi/Insurance_Performance_Analytics/README.md)
-
-Other projects include PDF visualization exports. Individual README files describe which working files are available and where additional screenshots can be added.
-
 ## Tableau Portfolio
 
 See my [Tableau Public profile](https://public.tableau.com/app/profile/karabo.ramalatso/vizzes) for published Tableau visualizations.
