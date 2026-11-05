@@ -6,12 +6,13 @@ A dynamic Excel dashboard engineered to analyze multi-dimensional sales, quantit
 ![E-Commerce Dashboard Preview](E_commerce_Dashboard.png)
 
 ## 📁 Repository Contents
+
 This directory contains the end-to-end deliverables for the project:
-* **`ECommerce_Dashboard.xlsx`**: The dynamic, formula-driven Excel dashboard utilizing interactive form controls.
-* **`ECommerce_Dashboard Brief.pdf`**: Project requirements, business questions, and scoping documentation.
-* **`Dashboard_Development_Report.pdf`**: Full technical documentation detailing formula architecture, data modeling challenges, and analytical conclusions.
-* **`ECommerce_Dashboard_Visuals .pdf`**: High-resolution static visuals and design exports of the dashboard.
-* **`E_commerce_Dashboard.png`**: Preview image of the primary dashboard interface.
+- [ECommerce_Dashboard.xlsx](ECommerce_Dashboard.xlsx) : The dynamic, formula-driven Excel dashboard utilizing interactive form controls.
+- [ECommerce_Dashboard Brief.pdf](ECommerce_Dashboard%20Brief.pdf) : Project requirements, business questions, and scoping documentation.
+- [Dashboard_Development_Report.pdf](Dashboard_Development_Report.pdf) : Full technical documentation detailing formula architecture, data modeling challenges, and analytical conclusions.
+- [ECommerce_Dashboard_Visuals .pdf](ECommerce_Dashboard_Visuals%20.pdf) : High-resolution static visuals and design exports of the dashboard.
+- [E_commerce_Dashboard.png](E_commerce_Dashboard.png) : Preview image of the primary dashboard interface.
 
 ## 🎯 Business Objective
 To provide sales leadership and category managers with an interactive decision-support tool capable of evaluating month-by-month and product-by-product performance trends, identifying profit drivers, and isolating regional sales variations.
